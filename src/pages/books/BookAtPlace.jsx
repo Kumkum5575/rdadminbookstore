@@ -1,6 +1,13 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
-import { Container, Row, Col, Form, Button, Table } from 'react-bootstrap';
+import {
+    Container,
+    Row,
+    Col,
+    Form,
+    Button,
+    Table
+} from 'react-bootstrap';
 import axios from 'axios';
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -17,30 +24,31 @@ function BookAtPlace() {
     const [editId, setEditId] = useState(null);
 
 
-    // Get all books
+    // =========================
+    // GET ALL BOOKS
+    // =========================
+
     const getBooks = async () => {
         try {
 
-            const response = await axios.get(`${apiUrl}/book`);
+            const response = await axios.get(`${apiUrl}/books`);
 
-            console.log('Books:', response.data);
+            console.log("Book API Response:", response.data);
 
-            if (Array.isArray(response.data)) {
-                setBooks(response.data);
-            }
-            else if (Array.isArray(response.data.books)) {
-                setBooks(response.data.books);
-            }
+            setBooks(response.data.data || []);
 
         } catch (error) {
 
-            console.log(error);
+            console.log("Error fetching books:", error);
 
         }
     };
 
 
-    // Get all availability records
+    // =========================
+    // GET BOOK AVAILABILITY
+    // =========================
+
     const getAvailability = async () => {
         try {
 
@@ -48,19 +56,29 @@ function BookAtPlace() {
                 `${apiUrl}/book-at-place`
             );
 
-            console.log('Availability:', response.data);
+            console.log(
+                "Book Availability Response:",
+                response.data
+            );
 
-            if (Array.isArray(response.data.bookAtPlace)) {
-                setAvailabilityList(response.data.bookAtPlace);
-            }
+            setAvailabilityList(
+                response.data.bookAtPlace || []
+            );
 
         } catch (error) {
 
-            console.log(error);
+            console.log(
+                "Error fetching availability:",
+                error
+            );
 
         }
     };
 
+
+    // =========================
+    // LOAD DATA
+    // =========================
 
     useEffect(() => {
 
@@ -70,31 +88,45 @@ function BookAtPlace() {
     }, []);
 
 
-    // Add / Update
+    // =========================
+    // ADD / UPDATE
+    // =========================
+
     const handleSubmit = async (e) => {
 
         e.preventDefault();
 
+
+        // Book validation
         if (!book) {
-            alert('Please select a book');
+
+            alert("Please select a book");
+
             return;
         }
 
+
+        // Pincode validation
         if (!pinCode) {
-            alert('Please enter pin code');
+
+            alert("Please enter pin code");
+
             return;
         }
 
 
         const data = {
+
             book: book,
             pinCode: pinCode,
             isAvailable: isAvailable
+
         };
 
 
         try {
 
+            // UPDATE
             if (editId) {
 
                 await axios.put(
@@ -102,9 +134,13 @@ function BookAtPlace() {
                     data
                 );
 
-                alert('Book availability updated successfully');
+                alert(
+                    "Book availability updated successfully"
+                );
 
             }
+
+            // ADD
             else {
 
                 await axios.post(
@@ -112,40 +148,59 @@ function BookAtPlace() {
                     data
                 );
 
-                alert('Book availability added successfully');
+                alert(
+                    "Book availability added successfully"
+                );
 
             }
 
+
+            // Reset form
 
             setBook('');
             setPinCode('');
             setIsAvailable(false);
             setEditId(null);
 
+
+            // Refresh list
+
             getAvailability();
 
-        }
-        catch (error) {
+
+        } catch (error) {
 
             console.log(error);
 
             alert(
                 error.response?.data?.message ||
-                'Something went wrong'
+                "Something went wrong"
             );
 
         }
+
     };
 
 
-    // Edit
+    // =========================
+    // EDIT
+    // =========================
+
     const handleEdit = (item) => {
 
         setEditId(item._id);
 
-        setBook(item.book?._id || '');
-        setPinCode(item.pinCode || '');
-        setIsAvailable(item.isAvailable || false);
+        setBook(
+            item.book?._id || item.book || ''
+        );
+
+        setPinCode(
+            item.pinCode || ''
+        );
+
+        setIsAvailable(
+            item.isAvailable || false
+        );
 
         window.scrollTo({
             top: 0,
@@ -155,14 +210,19 @@ function BookAtPlace() {
     };
 
 
-    // Delete
+    // =========================
+    // DELETE
+    // =========================
+
     const handleDelete = async (id) => {
 
         const confirmDelete = window.confirm(
-            'Are you sure you want to delete this record?'
+            "Are you sure you want to delete this record?"
         );
 
+
         if (!confirmDelete) {
+
             return;
         }
 
@@ -173,34 +233,47 @@ function BookAtPlace() {
                 `${apiUrl}/book-at-place/${id}`
             );
 
-            alert('Record deleted successfully');
+            alert(
+                "Record deleted successfully"
+            );
 
             getAvailability();
 
-        }
-        catch (error) {
+
+        } catch (error) {
 
             console.log(error);
 
             alert(
                 error.response?.data?.message ||
-                'Something went wrong'
+                "Something went wrong"
             );
 
         }
+
     };
 
 
-    // Cancel edit
+    // =========================
+    // CANCEL EDIT
+    // =========================
+
     const handleCancel = () => {
 
         setEditId(null);
+
         setBook('');
+
         setPinCode('');
+
         setIsAvailable(false);
 
     };
 
+
+    // =========================
+    // UI
+    // =========================
 
     return (
 
@@ -211,13 +284,13 @@ function BookAtPlace() {
             </h2>
 
 
-            {/* Form */}
+            {/* ================= FORM ================= */}
 
             <Form onSubmit={handleSubmit}>
 
                 <Row>
 
-                    {/* Select Book */}
+                    {/* SELECT BOOK */}
 
                     <Col md={6}>
 
@@ -226,6 +299,7 @@ function BookAtPlace() {
                             <Form.Label>
                                 Select Book
                             </Form.Label>
+
 
                             <Form.Select
                                 value={book}
@@ -245,11 +319,7 @@ function BookAtPlace() {
                                         key={item._id}
                                         value={item._id}
                                     >
-
-                                        {item.title ||
-                                            item.bookTitle ||
-                                            item.name}
-
+                                        {item.bookTitle}
                                     </option>
 
                                 ))}
@@ -261,7 +331,7 @@ function BookAtPlace() {
                     </Col>
 
 
-                    {/* Pin Code */}
+                    {/* PIN CODE */}
 
                     <Col md={6}>
 
@@ -270,6 +340,7 @@ function BookAtPlace() {
                             <Form.Label>
                                 Pin Code
                             </Form.Label>
+
 
                             <Form.Control
                                 type="text"
@@ -287,7 +358,7 @@ function BookAtPlace() {
                 </Row>
 
 
-                {/* Availability */}
+                {/* AVAILABILITY */}
 
                 <Form.Group className="mb-3">
 
@@ -305,7 +376,7 @@ function BookAtPlace() {
                 </Form.Group>
 
 
-                {/* Buttons */}
+                {/* BUTTON */}
 
                 <Button
                     type="submit"
@@ -313,11 +384,14 @@ function BookAtPlace() {
                 >
 
                     {editId
-                        ? 'Update Availability'
-                        : 'Save Availability'}
+                        ? "Update Availability"
+                        : "Save Availability"
+                    }
 
                 </Button>
 
+
+                {/* CANCEL */}
 
                 {editId && (
 
@@ -335,7 +409,7 @@ function BookAtPlace() {
             </Form>
 
 
-            {/* Availability Table */}
+            {/* ================= LIST ================= */}
 
             <h4 className="mt-5 mb-3">
                 Book Availability List
@@ -391,10 +465,10 @@ function BookAtPlace() {
 
                                     <td>
 
-                                        {item.book?.title ||
-                                            item.book?.bookTitle ||
-                                            item.book?.name ||
-                                            'N/A'}
+                                        {item.book?.bookTitle ||
+                                            item.book?.title ||
+                                            "N/A"
+                                        }
 
                                     </td>
 
@@ -481,5 +555,6 @@ function BookAtPlace() {
     );
 
 }
+
 
 export default BookAtPlace;

@@ -36,7 +36,7 @@ function Sidebar() {
 
 
         <div className="flex-grow-1 overflow-auto">
-          <ListGroup variant="flush" className="pt-4 px-3 flex-grow-1 overflow-auto">
+          <ListGroup variant="flush" className="pt-4 px-1 flex-grow-1 overflow-auto">
 
            
             <ListGroup.Item
@@ -50,27 +50,28 @@ function Sidebar() {
               as={NavLink}
               to="/discounts"
               className="d-flex align-items-center gap-2">
-              <i className='bi bi-book'></i>
+              <i className='bi bi-tag'></i>
               <span className="d-none d-md-inline">Manage Discount</span>
             </ListGroup.Item>
             <ListGroup.Item
               as={NavLink}
               to="/users"
               className="d-flex align-items-center gap-2">
-              <i className='bi bi-book'></i>
+              <i className='bi bi-person'></i>
               <span className="d-none d-md-inline">Manage user</span>
             </ListGroup.Item>
             <ListGroup.Item
-            as={NavLink}
-             to="/manage-book-availability"
-             className="d-flex align-items-center gap-2"
-            >
-           <i className="bi bi-book"></i>
-           <span className="d-none d-md-inline">
-           Manage Book Availability
-           </span>
-           </ListGroup.Item>
-           
+  as={NavLink}
+  to="/manage-book-availability"
+  className="d-flex align-items-center gap-2 w-100"
+   style={{ width: '100%' }}
+>
+  <i className="bi bi-box-seam"></i>
+
+  <span className="d-none d-md-inline text-nowrap">
+    Manage Book Availability
+  </span>
+</ListGroup.Item>
 
             {/* <ListGroup.Item
               as={NavLink}
