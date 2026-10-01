@@ -10,6 +10,8 @@ import DiscountList from './pages/Discount/DiscountList'
 import DiscountForEdit from './pages/Discount/DiscountForEdit'
 import UserList from './pages/users/UserList'
 import BookDetail from './pages/books/BookDetail'
+// import ManageBookAvailability from './ManageBookAvailability';
+import BookAtPlace from './pages/books/BookAtPlace';
 function App() {
   return (
     <BrowserRouter>
@@ -37,7 +39,10 @@ function App() {
              <Route path="/add/discount" element={<CreateDiscount />} />
              <Route path='/edit/discount/:id' element={<DiscountForEdit/>}/>
              <Route path="/book/:id" element={<BookDetail />} />
-
+            <Route
+    path="/manage-book-availability"
+    element={<BookAtPlace />}
+/>
 
 
 
