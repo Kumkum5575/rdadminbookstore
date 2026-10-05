@@ -32,7 +32,7 @@ function AdminLogin() {
 
     try {
       setShowSpinner(true);
-      const res = await axios.post( apiUrl+"admin/login", {
+      const res = await axios.post( apiUrl+"/admin/login", {
         email,
         password,
       });
